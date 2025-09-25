@@ -1,6 +1,48 @@
 ﻿@page "/palindrome"
+@using System.Security.Cryptography.X509Certificates
 <h3>PalindromeComponent</h3>
 
+<input type="text" @bind="myText" placeholder="Enter text here" class="form-control" />
+
+<button class="btn btn-primary mt-2" @onclick="CheckPalindrome">Check Palindrome</button>
+
+<p>@message</p>
+
 @code {
+private string myText { get; set; } = string.Empty;
+private string message { get; set; } = string.Empty;
+
+private void CheckPalindrome()
+{
+    if (string.IsNullOrWhiteSpace(myText))
+    {
+        message = "Please enter a word or phrase.";
+        return;
+    }
+
+    // Normalize: remove spaces and make lowercase
+    var cleaned = new string(myText
+        .ToLower()
+        .Where(char.IsLetterOrDigit)
+        .ToArray());
+
+    bool isPalindrome = true;
+    for(int i=0, j=cleaned.Length-1; i<cleaned.Length; i++, j--)
+    {
+        Console.WriteLine($"Char {i}: {cleaned[i]} vs {cleaned[j]}");
+        if (cleaned[i] != cleaned[j])
+        {
+            Console.WriteLine("Mismatch found, not a palindrome.");
+            message = $"❌ '{myText}' is not a palindrome.";
+            isPalindrome = false;
+            break;
+        }
+    }
+    if (isPalindrome){
+        message = $"✅ '{myText}' is a palindrome!";
+        Console.WriteLine("It's a palindrome!");
+    }
+
+}
 
 }
