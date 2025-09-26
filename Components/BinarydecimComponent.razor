@@ -1,0 +1,53 @@
+﻿@page "/binarydecim"
+<h3>Base Conversion</h3>
+
+<input type="text" @bind="inputNumber" placeholder="Enter number here" class="form-control" />
+
+
+<button class="btn btn-primary mt-2" @onclick="ConverToBinary">ConverToBinary</button>
+<button class="btn btn-primary mt-2" @onclick="ConverToDecimal">ConverToDecimal</button>
+<p>@message</p>
+
+@code {
+	private string? inputNumber { get; set; }
+
+    private string? message { get; set; }
+
+
+    private void ConverToBinary()
+    {
+        if (string.IsNullOrWhiteSpace(inputNumber))
+        {
+            message = "Please enter a valid decimal number.";
+            return;
+        }
+
+        if (int.TryParse(inputNumber, out int decimalNumber))
+        {
+            message = Convert.ToString(decimalNumber, 2);
+        }
+        else
+        {
+            message = "Invalid decimal number.";
+        }
+    }
+
+    private void ConverToDecimal()
+    {
+        if (string.IsNullOrWhiteSpace(inputNumber))
+        {
+            message = "Please enter a valid binary number.";
+            return;
+        }
+
+        try
+        {
+            int decimalNumber = Convert.ToInt32(inputNumber, 2);
+            message = decimalNumber.ToString();
+        }
+        catch (FormatException)
+        {
+            message = "Invalid binary number.";
+        }
+    }
+}
