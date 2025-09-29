@@ -8,46 +8,93 @@
 <button class="btn btn-primary mt-2" @onclick="ConverToDecimal">ConverToDecimal</button>
 <p>@message</p>
 
-@code {
-	private string? inputNumber { get; set; }
+@code{
 
-    private string? message { get; set; }
-
-
-    private void ConverToBinary()
+    namespace MyNamespace
     {
-        if (string.IsNullOrWhiteSpace(inputNumber))
-        {
-            message = "Please enter a valid decimal number.";
-            return;
-        }
+        using System.Text; // This line is crucial for using StringBuilder
 
-        if (int.TryParse(inputNumber, out int decimalNumber))
-        {
-            message = Convert.ToString(decimalNumber, 2);
-        }
-        else
-        {
-            message = "Invalid decimal number.";
-        }
-    }
+            private string? inputNumber { get; set; }
+            private string? message { get; set; }
 
-    private void ConverToDecimal()
-    {
-        if (string.IsNullOrWhiteSpace(inputNumber))
-        {
-            message = "Please enter a valid binary number.";
-            return;
-        }
+            private void ConverToBinary()
+            {
+                if (string.IsNullOrWhiteSpace(inputNumber))
+                {
+                    message = "Please enter a valid decimal number.";
+                    return;
+                }
 
-        try
-        {
-            int decimalNumber = Convert.ToInt32(inputNumber, 2);
-            message = decimalNumber.ToString();
-        }
-        catch (FormatException)
-        {
-            message = "Invalid binary number.";
-        }
+                if (int.TryParse(inputNumber, out int decimalNumber))
+                {
+                    //message = Convert.ToString(dceimalNumber, 2);
+
+                    message = ConvertDecimalToBinary(decimalNumber);
+                }
+                else
+                {
+                    message = "Invalid decimal number.";
+                } 
+            }
+
+            private void ConverToDecimal()
+            {
+                if (string.IsNullOrWhiteSpace(inputNumber))
+                {
+                    message = "Please enter a valid binary number.";
+                    return;
+                }
+
+                try
+                {
+                    // int decimalNumber = Convert.ToInt32(inputNumber, 2);
+                    int decimalNumber = BinaryToDecimal(inputNumber);
+
+                    message = decimalNumber.ToString();
+                }
+                catch (FormatException)
+                {
+                    message = "Invalid binary number.";
+                }
+            }
+
+
+            private static int BinaryToDecimal(string binaryString)
+            {
+                int decimalValue = 0;
+                int power = 0;
+
+                // Iterate from the rightmost digit (least significant bit)
+                for (int i = binaryString.Length - 1; i >= 0; i--)
+                {
+                    if (binaryString[i] == '1')
+                    {
+                        // Add 2 raised to the power of its position
+                        decimalValue += (int)Math.Pow(2, power);
+                    }
+                    power++; // Increment the power for the next digit
+                }
+                return decimalValue;
+            }
+
+            private string ConvertDecimalToBinary(int decimalNumber)
+            {
+                if (decimalNumber == 0)
+                {
+                    return "0";
+                }
+
+                StringBuilder binaryResult = new StringBuilder();
+
+                while (decimalNumber > 0)
+                {
+                    int remainder = decimalNumber % 2; // Get the remainder
+                    binaryResult.Insert(0, remainder); // Prepend the remainder to the result
+                    decimalNumber /= 2; // Update the decimal number to the quotient
+                }
+
+                return binaryResult.ToString();
+            }
+        
     }
 }
